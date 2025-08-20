@@ -3,7 +3,9 @@ import { router } from "@/core/router/router";
 import { notifications } from "@mantine/notifications";
 import axios, { type AxiosRequestConfig } from "axios";
 
-const client = axios.create({});
+const client = axios.create({
+  withCredentials: true,
+});
 
 interface APIError {
   success: false;

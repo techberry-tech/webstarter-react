@@ -1,11 +1,13 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { logger } from 'hono/logger';
 import { jwtVerify, SignJWT } from 'jose';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const mockJWTSecret = 'mock-secret-key'
+const cookieName = 'wst-runtime-session'
 
 async function startServer() {
   const config = await loadConfig();
@@ -13,35 +15,45 @@ async function startServer() {
   app.use(logger())
   // Public routes
   app.post('/api/auth/login', async (c) => {
-    const { username, password } = await c.req.json()
+    const { username, password, return_token_in_response } = await c.req.json()
     const user = config.users.find(u => u.username === username && u.password === password)
     if (user) {
       const token = await createJWT({ username: user.username, full_name: user.fullName, role: user.role })
-      return c.json({ message: "Login successful", access_token: token })
+      if (return_token_in_response) {
+        return c.json({ message: "Login successful", access_token: token })
+      }
+      // Set token to cookie
+      setCookie(c, cookieName, token, { httpOnly: true, maxAge: 60 * 60 * 24 })
+      return c.json({ message: "Login successful" })
     }
     return c.json({ error: "Invalid username or password" }, 401)
   })
   // Protected routes
   app.use(async (c, next) => {
+    const authCookie = getCookie(c, cookieName)
     const authHeader = c.req.header('Authorization')
-    if (authHeader) {
-      const token = authHeader.split(' ')[1]
-      try {
-        const user = await jwtVerify(token, new TextEncoder().encode(mockJWTSecret))
-        if (user == null) {
-          return c.json({ error: "Unauthorized" }, 401)
-        }
-
-        c.user = user
-        return next()
-      } catch (error) {
+    const token = authCookie ? authCookie : authHeader?.split(' ')[1]
+    if (token == null) {
+      return c.json({ error: "Unauthorized" }, 401)
+    }
+    try {
+      const user = await jwtVerify(token, new TextEncoder().encode(mockJWTSecret))
+      if (user == null) {
         return c.json({ error: "Unauthorized" }, 401)
       }
+
+      c.user = user
+      return next()
+    } catch (error) {
+      return c.json({ error: "Unauthorized" }, 401)
     }
-    return c.json({ error: "Unauthorized" }, 401)
   })
   app.get('/api/auth/status', (c) => {
     return c.json({ user: c.user?.payload })
+  })
+  app.post('/api/auth/logout', (c) => {
+    deleteCookie(c, cookieName)
+    return c.json({ message: "Logout successful" })
   })
 
   // Dynamic routes here

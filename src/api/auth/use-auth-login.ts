@@ -18,7 +18,7 @@ export default function useAuthLogin() {
       const response = await apiCall({
         method: "POST",
         url: "/api/auth/login",
-        data: { ...payload, return_token_in_response: true },
+        data: payload,
         validateUnauthorized: false, // Do not redirect on 401, handle it in the component
       });
       return response;
