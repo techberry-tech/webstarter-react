@@ -1,4 +1,4 @@
-import useAuthLogin, { type ILoginRequest } from "@/api/auth/use-auth-login";
+import useAuthLogin, { type LoginRequest } from "@/api/auth/use-auth-login";
 import { ROUTE_PATHS } from "@/core/router/config";
 import { Button, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -15,7 +15,7 @@ export default function LoginPage() {
     const data = {
       username: formData.get("username") as string,
       password: formData.get("password") as string,
-    } satisfies ILoginRequest;
+    } satisfies LoginRequest;
     // Call the login mutation
     const result = await mutateAsync(data);
     if (!result.success) {

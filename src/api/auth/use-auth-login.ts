@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiCall, type APIResponse } from "../client";
 
-export interface ILoginRequest {
+export interface LoginRequest {
   username: string;
   password: string;
 }
 
-export interface ILoginResponse {
+export interface LoginResponse {
   message: string;
   access_token: string;
 }
@@ -14,7 +14,7 @@ export interface ILoginResponse {
 export default function useAuthLogin() {
   return useMutation({
     mutationKey: ["authLogin"],
-    mutationFn: async (payload: ILoginRequest): Promise<APIResponse<ILoginResponse>> => {
+    mutationFn: async (payload: LoginRequest): Promise<APIResponse<LoginResponse>> => {
       const response = await apiCall({
         method: "POST",
         url: "/api/auth/login",

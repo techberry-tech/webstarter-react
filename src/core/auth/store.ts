@@ -1,18 +1,18 @@
 import { create } from "zustand";
 
-export interface IAuthUser {
+export interface AuthUser {
   username: string;
   fullName: string;
   role: "user";
 }
 
-interface IAuthState {
-  user: IAuthUser | null;
-  setUser: (user: IAuthUser | null) => void;
+interface AuthState {
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
   isAuthenticated: () => boolean;
 }
 
-export const useAuthStore = create<IAuthState>()((set, get) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
   setUser: (user) => set({ user }),
   isAuthenticated: () => {
