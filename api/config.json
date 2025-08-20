@@ -1,0 +1,19 @@
+{
+  "baseURI": "",
+  "services": {
+    "/ic/project/services/Signon_WSLogon": {
+      "name": "Signon_WSLogon",
+      "description": "Service for user sign-on",
+      "response": {
+        "status": 200,
+        "body": {
+          "user": {
+            "id": "mockUserId",
+            "name": "Mock User"
+          },
+          "sessionId": "mockSessionId"
+        }
+      }
+    }
+  }
+}
