@@ -24,15 +24,35 @@ async function startServer() {
 
       // Default authentication apis
       if (req.url === path.posix.join(config.baseURI, '/api/auth/login') && req.method === 'POST') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        // Set mockup cookie session
-        res.setHeader('Set-Cookie', 'wst-session=mockSessionId; HttpOnly; Path=/; Max-Age=86400');
-        res.end(JSON.stringify({ message: "Logged in successfully", access_token: "mockAccessToken" }));
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk;
+        });
+        req.on('end', () => {
+          try {
+            const { username, password } = JSON.parse(body);
+            if (username === 'user' && password === '1234') {
+              res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Set-Cookie': 'wst-runtime-session=mockSessionId; HttpOnly; Path=/; Max-Age=86400'
+              });
+              res.end(JSON.stringify({ message: "Logged in successfully", access_token: "mockAccessToken" }));
+            } else {
+              res.writeHead(401, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: "Invalid username or password" }));
+            }
+          } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: "Invalid request body" }));
+          }
+        });
         return;
       } else if (req.url === path.posix.join(config.baseURI, '/api/auth/logout') && req.method === 'POST') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Set-Cookie': 'wst-runtime-session=; HttpOnly; Path=/; Max-Age=0'
+        });
         // Clear the mockup cookie session
-        res.setHeader('Set-Cookie', 'wst-session=; HttpOnly; Path=/; Max-Age=0');
         res.end(JSON.stringify({ message: "Logged out successfully" }));
         return;
       } else if (req.url === path.posix.join(config.baseURI, '/api/auth/status') && req.method === 'GET') {

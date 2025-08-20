@@ -1,15 +1,30 @@
+import { router } from "@/core/router/router";
 import { MantineProvider } from "@mantine/core";
 import { RouterProvider } from "react-router";
-import { router } from "@/core/router/router";
 
 import "@mantine/core/styles.css";
+// ‼️ import notifications styles after core package styles
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { themeConfig } from "./core/theme/theme";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
-    <MantineProvider defaultColorScheme="light" theme={themeConfig}>
-      <RouterProvider router={router} />
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider defaultColorScheme="light" theme={themeConfig}>
+        <RouterProvider router={router} />
+        <Notifications />
+      </MantineProvider>
+    </QueryClientProvider>
   );
 }
 
