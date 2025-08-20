@@ -1,5 +1,13 @@
 {
   "baseURI": "",
+  "users": [
+    {
+      "username": "user",
+      "password": "1234",
+      "fullName": "Mock User",
+      "role": "user"
+    }
+  ],
   "services": {
     "/ic/project/services/Signon_WSLogon": {
       "name": "Signon_WSLogon",

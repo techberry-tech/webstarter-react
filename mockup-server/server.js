@@ -1,100 +1,93 @@
-import { readFile } from 'fs/promises';
-import http from 'http';
-import path from 'path';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { logger } from 'hono/logger';
+import { jwtVerify, SignJWT } from 'jose';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+
+const mockJWTSecret = 'mock-secret-key'
 
 async function startServer() {
-
   const config = await loadConfig();
-
-  console.log(`Loaded configuration successfully ${Object.keys(config.services).length} service(s)`);
-
-  const server = http.createServer((req, res) => {
-    try {
-      console.log(`Received request: ${req.method} ${req.url}`);
-      // Set CORS headers
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-      // Handle preflight requests
-      if (req.method === 'OPTIONS') {
-        res.writeHead(204);
-        res.end();
-        return;
-      }
-
-      // Default authentication apis
-      if (req.url === path.posix.join(config.baseURI, '/api/auth/login') && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk;
-        });
-        req.on('end', () => {
-          try {
-            const { username, password } = JSON.parse(body);
-            if (username === 'user' && password === '1234') {
-              res.writeHead(200, {
-                'Content-Type': 'application/json',
-                'Set-Cookie': 'wst-runtime-session=mockSessionId; HttpOnly; Path=/; Max-Age=86400'
-              });
-              res.end(JSON.stringify({ message: "Logged in successfully", access_token: "mockAccessToken" }));
-            } else {
-              res.writeHead(401, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ error: "Invalid username or password" }));
-            }
-          } catch (err) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: "Invalid request body" }));
-          }
-        });
-        return;
-      } else if (req.url === path.posix.join(config.baseURI, '/api/auth/logout') && req.method === 'POST') {
-        res.writeHead(200, {
-          'Content-Type': 'application/json',
-          'Set-Cookie': 'wst-runtime-session=; HttpOnly; Path=/; Max-Age=0'
-        });
-        // Clear the mockup cookie session
-        res.end(JSON.stringify({ message: "Logged out successfully" }));
-        return;
-      } else if (req.url === path.posix.join(config.baseURI, '/api/auth/status') && req.method === 'GET') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        // Return a mockup session object
-        res.end(JSON.stringify({
-          "user": {
-            "fullName": "Mock User",
-            "role": "user",
-            "username": "mockuser"
-          }
-        }));
-        return;
-      }
-      // Here you would handle the request based on the config
-      /**
-       * @type {ServiceConfig} - The service configuration object
-       */
-      const sv = config.services[req.url];
-      if (sv) {
-        // Simulate a service response based on the configuration
-        res.writeHead(sv.response.status, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(sv.response.body));
-        return;
-      } else {
-        // If the service is not found, return a 404 error
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Service not found' }));
-        return;
-      }
-    } catch (error) {
-      console.error('Error handling request:', error);
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Internal Server Error' }));
+  const app = new Hono()
+  app.use(logger())
+  // Public routes
+  app.post('/api/auth/login', async (c) => {
+    const { username, password } = await c.req.json()
+    const user = config.users.find(u => u.username === username && u.password === password)
+    if (user) {
+      const token = await createJWT({ username: user.username, full_name: user.fullName, role: user.role })
+      return c.json({ message: "Login successful", access_token: token })
     }
-  });
+    return c.json({ error: "Invalid username or password" }, 401)
+  })
+  // Protected routes
+  app.use(async (c, next) => {
+    const authHeader = c.req.header('Authorization')
+    if (authHeader) {
+      const token = authHeader.split(' ')[1]
+      try {
+        const user = await jwtVerify(token, new TextEncoder().encode(mockJWTSecret))
+        if (user == null) {
+          return c.json({ error: "Unauthorized" }, 401)
+        }
 
-  const PORT = 3001;
+        c.user = user
+        return next()
+      } catch (error) {
+        return c.json({ error: "Unauthorized" }, 401)
+      }
+    }
+    return c.json({ error: "Unauthorized" }, 401)
+  })
+  app.get('/api/auth/status', (c) => {
+    return c.json({ user: c.user?.payload })
+  })
 
-  server.listen(PORT, () => {
-    console.log(`Mock API server running at http://localhost:${PORT}`);
-  });
+  // Dynamic routes here
+  app.all('*', (c) => {
+    const path = c.req.path
+    /**
+     * @type {ServiceConfig | undefined}
+     */
+    const service = config.services[path]
+    if (service == null) {
+      return c.json({ error: "Not Found" }, 404)
+    }
+
+    return c.json(service.response.body, service.response.status)
+  })
+
+  const server = serve({
+    fetch: app.fetch,
+    port: 3001,
+    hostname: 'localhost',
+  })
+
+  // graceful shutdown
+  process.on('SIGINT', () => {
+    server.close()
+    process.exit(0)
+  })
+  process.on('SIGTERM', () => {
+    server.close((err) => {
+      if (err) {
+        console.error(err)
+        process.exit(1)
+      }
+      process.exit(0)
+    })
+  })
+}
+
+startServer();
+
+async function createJWT(payload) {
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('1d')
+    .sign(new TextEncoder().encode(mockJWTSecret));
+  return token;
 }
 
 /**
@@ -110,20 +103,6 @@ async function loadConfig() {
   }
 }
 
-startServer().catch((error) => {
-  console.error('Error starting server:', error);
-  process.exit(1);
-});
-
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
 
 /**
  * @typedef {Object} ServiceConfig
@@ -139,7 +118,16 @@ process.on('unhandledRejection', (reason, promise) => {
  */
 
 /**
+ * @typedef {Object} User
+ * @property {string} username - The username of the user
+ * @property {string} password - The password of the user
+ * @property {string} fullName - The full name of the user
+ * @property {string} role - The role of the user
+ */
+
+/**
  * @typedef {Object} Config
  * @property {string} baseURI - The base URI for the API
+ * @property {Array<User>} users - The list of users for authentication
  * @property {Object<string, ServiceConfig>} services - The services available in the API
  */
