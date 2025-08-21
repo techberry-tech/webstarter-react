@@ -9,8 +9,20 @@ export const Route = createFileRoute("/")({
 });
 
 export default function Login() {
-  const search = Route.useSearch() as any;
-  const logout = search.logout === true ? true : false;
+interface Search {
+  logout?: boolean;
+}
+
+export const Route = createFileRoute("/")({
+  component: Login,
+  validateSearch: (search: Record<string, unknown>): Search => ({
+    logout: typeof search.logout === "string" ? search.logout === "true" : undefined,
+  }),
+});
+
+export default function Login() {
+  const search = Route.useSearch();
+  const logout = search.logout === true;
   const navigate = useNavigate();
   const { isPending, mutateAsync } = useAuthLogin();
   const { isFetching, isSuccess } = useAuthStatus(!logout, false);

@@ -51,7 +51,13 @@ export default function MainLayout() {
     if (selectedMenu) {
       navigate({ to: selectedMenu.items[0].href });
     }
-  }, [selectedMenu, navigate]);
+    if (
+      selectedMenu &&
+      pathname !== selectedMenu.items[0].href
+    ) {
+      navigate({ to: selectedMenu.items[0].href });
+    }
+  }, [selectedMenu, navigate, pathname]);
 
   return (
     <main className="grid grid-cols-[220px_1fr] h-screen">
