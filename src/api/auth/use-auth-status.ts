@@ -1,12 +1,12 @@
 import { useAuthStore } from "@/core/auth/store";
 import { useQuery } from "@tanstack/react-query";
-import { apiCall } from "../client";
+import { makeRequest } from "../client";
 
 export default function useAuthStatus(enabled: boolean = true) {
   return useQuery({
     queryKey: ["authStatus"],
     queryFn: async () => {
-      const response = await apiCall({
+      const response = await makeRequest({
         method: "GET",
         url: "/api/auth/status",
       });
