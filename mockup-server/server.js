@@ -49,7 +49,13 @@ async function startServer() {
     }
   })
   app.get('/api/auth/status', (c) => {
-    return c.json({ user: c.user?.payload })
+    return c.json({
+      user: {
+        username: c.user?.payload?.username,
+        fullName: c.user?.payload?.full_name,
+        role: c.user?.payload?.role
+      }
+    })
   })
   app.post('/api/auth/logout', (c) => {
     deleteCookie(c, cookieName)

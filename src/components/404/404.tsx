@@ -1,8 +1,9 @@
 import { Button, Container, Group, Text, Title } from "@mantine/core";
+import { useNavigate } from "@tanstack/react-router";
 import classes from "./404.module.css";
 
 export default function NotFound() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <Container className="flex flex-col items-center justify-center gap-2 p-4">
       <div className={classes.inner}>
@@ -19,10 +20,7 @@ export default function NotFound() {
             this is an error contact support.
           </Text>
           <Group justify="center" mt={12}>
-            <Button
-              size="md"
-              // onClick={() => navigate(ROUTE_PATHS.LANDING)}
-            >
+            <Button size="md" onClick={() => navigate({ to: "/landing" })}>
               Take me back to home page
             </Button>
           </Group>

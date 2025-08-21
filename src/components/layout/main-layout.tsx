@@ -1,13 +1,17 @@
+import useAuthLogout from "@/api/auth/use-auth-logout";
 import { MENUS, type MyMenu } from "@/config/menu";
 import { cn } from "@/lib/utils";
-import { Box, Button, Divider, Menu, Text } from "@mantine/core";
+import { Box, Button, Divider, Menu, Popover, Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMainLayoutStore } from "./main-layout-store";
 
 export default function MainLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { isPending, mutate: logout } = useAuthLogout();
+
+  const [signOutOpened, setSignOutOpened] = useState<boolean>(false);
 
   const selectedMenu = useMainLayoutStore((state) => state.selectedMenu);
   const setSelectedMenu = useMainLayoutStore((state) => state.setSelectedMenu);
@@ -36,6 +40,11 @@ export default function MainLayout() {
     if (selectedMenu !== menu) {
       setSelectedMenu(menu);
     }
+  };
+
+  const handleConfirmLogout = () => {
+    setSignOutOpened(false);
+    logout();
   };
 
   useEffect(() => {
@@ -69,11 +78,32 @@ export default function MainLayout() {
           </Menu>
         </div>
         <Divider />
-        <div className="flex flex-col p-4 gap-2">
+        <div className="flex flex-col p-4 gap-2 grow">
           <Text size="xs" fw={500} c="dimmed">
             Menu
           </Text>
           <div>{menuItems}</div>
+        </div>
+        <Divider />
+        <div className="flex flex-col p-4 gap-2">
+          <Popover position="top" withArrow shadow="md" opened={signOutOpened} onChange={setSignOutOpened}>
+            <Popover.Target>
+              <Button variant="light" color="red" onClick={() => setSignOutOpened((prev) => !prev)} loading={isPending}>
+                Sign Out
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Text size="sm">Are you sure you want to sign out?</Text>
+              <div className="flex justify-end mt-2 gap-1.5">
+                <Button size="compact-xs" variant="default" onClick={() => setSignOutOpened(false)}>
+                  No
+                </Button>
+                <Button size="compact-xs" color="red" onClick={handleConfirmLogout}>
+                  Yes
+                </Button>
+              </div>
+            </Popover.Dropdown>
+          </Popover>
         </div>
       </nav>
       <Outlet />

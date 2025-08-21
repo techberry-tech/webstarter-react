@@ -5,5 +5,5 @@ export const Route = createFileRoute("/_pathlessLayout/flight-booking/dashboard"
 });
 
 function RouteComponent() {
-  return <div>Hello DashboardPage</div>;
+  return <div>Hello Flight Booking Dashboard</div>;
 }

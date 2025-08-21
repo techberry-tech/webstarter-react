@@ -34,7 +34,7 @@ export const makeRequest = async <T = any>({ validateUnauthorized = true, ...res
     if (axios.isAxiosError(error)) {
       // Handle 401 Unauthorized error
       if (validateUnauthorized === true && error.response?.status === 401) {
-        router.navigate({ to: "/" });
+        router.navigate({ to: "/", search: { logout: true } });
         notifications.show({
           color: "red",
           message: "Session expired. Please log in again.",

@@ -10,10 +10,10 @@ export const Route = createFileRoute("/")({
 
 export default function Login() {
   const search = Route.useSearch() as any;
-  const logout = search.logout ?? false;
+  const logout = search.logout === true ? true : false;
   const navigate = useNavigate();
   const { isPending, mutateAsync } = useAuthLogin();
-  const { isFetching, isSuccess } = useAuthStatus(!logout);
+  const { isFetching, isSuccess } = useAuthStatus(!logout, false);
 
   if (isFetching) {
     return (
