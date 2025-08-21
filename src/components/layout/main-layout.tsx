@@ -48,13 +48,7 @@ export default function MainLayout() {
   };
 
   useEffect(() => {
-    if (selectedMenu) {
-      navigate({ to: selectedMenu.items[0].href });
-    }
-    if (
-      selectedMenu &&
-      pathname !== selectedMenu.items[0].href
-    ) {
+    if (selectedMenu && pathname !== selectedMenu.items[0].href) {
       navigate({ to: selectedMenu.items[0].href });
     }
   }, [selectedMenu, navigate, pathname]);
