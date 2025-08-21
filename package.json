@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n client,server \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client": "vite",
-    "dev:server": "node mockup-server/server.js",
+    "dev": "concurrently -n vite-react,mockup-server \"npm run dev:vite-react\" \"npm run dev:mockup-server\"",
+    "dev:vite-react": "vite",
+    "dev:mockup-server": "node mockup-server/server.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -15,12 +15,15 @@
     "@mantine/core": "^8.2.5",
     "@mantine/hooks": "^8.2.5",
     "@mantine/notifications": "^8.2.5",
+    "@tabler/icons-react": "^3.34.1",
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.85.5",
     "axios": "^1.11.0",
+    "clsx": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.8.1",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.12",
     "zustand": "^5.0.8"
   },

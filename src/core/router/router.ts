@@ -1,4 +1,4 @@
-import NotFound from "@/pages/404/404";
+import NotFound from "@/pages/common/404/404";
 import { createBrowserRouter } from "react-router";
 import ProtectedRoutes from "../auth/protected";
 import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "./config";

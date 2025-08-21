@@ -1,7 +1,7 @@
-import { Button, Container, Group, Text, Title } from "@mantine/core";
-import classes from "./404.module.css";
-import { useNavigate } from "react-router";
 import { ROUTE_PATHS } from "@/core/router/config";
+import { Button, Container, Group, Text, Title } from "@mantine/core";
+import { useNavigate } from "react-router";
+import classes from "./404.module.css";
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -17,11 +17,11 @@ export default function NotFound() {
         <div className={classes.content}>
           <Title className={classes.title}>Nothing to see here</Title>
           <Text c="dimmed" size="lg" ta="center" className={classes.description}>
-            Page you are trying to open does not exist. You may have mistyped the address, or the page has been moved to another URL.
-            If you think this is an error contact support.
+            Page you are trying to open does not exist. You may have mistyped the address, or the page has been moved to another URL. If you think
+            this is an error contact support.
           </Text>
-          <Group justify="center">
-            <Button size="md" onClick={() => navigate(ROUTE_PATHS.LOGIN)}>
+          <Group justify="center" mt={12}>
+            <Button size="md" onClick={() => navigate(ROUTE_PATHS.COMMON.LOGIN)}>
               Take me back to home page
             </Button>
           </Group>

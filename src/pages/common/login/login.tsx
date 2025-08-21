@@ -28,7 +28,7 @@ export default function LoginPage() {
     }
 
     // On success, navigate to the admin dashboard
-    navigate(ROUTE_PATHS.DASHBOARD, { replace: true });
+    navigate(ROUTE_PATHS.LANDING, { replace: true });
   };
 
   return (
