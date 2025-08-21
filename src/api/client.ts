@@ -35,7 +35,7 @@ export const apiCall = async <T = any>({ validateUnauthorized = true, ...rest }:
     if (axios.isAxiosError(error)) {
       // Handle 401 Unauthorized error
       if (validateUnauthorized === true && error.response?.status === 401) {
-        router.navigate(ROUTE_PATHS.LOGIN);
+        router.navigate(ROUTE_PATHS.COMMON.LOGIN);
         notifications.show({
           color: "red",
           message: "Session expired. Please log in again.",

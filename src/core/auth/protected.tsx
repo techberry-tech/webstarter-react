@@ -17,7 +17,7 @@ export default function ProtectedRoutes() {
   }
 
   if (isError) {
-    return <Navigate to={ROUTE_PATHS.LOGIN} replace state={{ logout: true }} />;
+    return <Navigate to={ROUTE_PATHS.COMMON.LOGIN} replace state={{ logout: true }} />;
   }
 
   return <MainLayout />;
