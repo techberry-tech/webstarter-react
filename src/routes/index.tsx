@@ -1,12 +1,32 @@
 import useAuthLogin, { type LoginRequest } from "@/api/auth/use-auth-login";
-import { ROUTE_PATHS } from "@/core/router/config";
-import { Button, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
+import useAuthStatus from "@/api/auth/use-auth-status";
+import { Button, Loader, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useNavigate } from "react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 
-export default function LoginPage() {
+export const Route = createFileRoute("/")({
+  component: Login,
+});
+
+export default function Login() {
+  const search = Route.useSearch() as any;
+  const logout = search.logout ?? false;
   const navigate = useNavigate();
   const { isPending, mutateAsync } = useAuthLogin();
+  const { isFetching, isSuccess } = useAuthStatus(!logout);
+
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader type="dots" />
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+  }
+
+  if (isSuccess) {
+    return <Navigate to="/landing" replace />;
+  }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -28,7 +48,7 @@ export default function LoginPage() {
     }
 
     // On success, navigate to the admin dashboard
-    navigate(ROUTE_PATHS.LANDING, { replace: true });
+    navigate({ to: "/landing" });
   };
 
   return (

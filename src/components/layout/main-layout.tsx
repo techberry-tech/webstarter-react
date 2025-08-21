@@ -1,20 +1,22 @@
 import { MENUS, type MyMenu } from "@/config/menu";
 import { cn } from "@/lib/utils";
 import { Box, Button, Divider, Menu, Text } from "@mantine/core";
-import { useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useMainLayoutStore } from "./main-layout-store";
 
 export default function MainLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  // TODO: move to zustand and add logic redirect when change menu to first item
-  const [selectedMenu, setSelectedMenu] = useState(MENUS[0]);
+
+  const selectedMenu = useMainLayoutStore((state) => state.selectedMenu);
+  const setSelectedMenu = useMainLayoutStore((state) => state.setSelectedMenu);
 
   const menuItems = selectedMenu.items.map(({ icon: Icon, label, href }) => {
     const isActive = pathname === href;
     return (
       <div
-        onClick={() => navigate(href)}
+        onClick={() => navigate({ to: href })}
         key={label}
         className={cn("flex grow items-center gap-2 rounded-md px-3 py-1.5 cursor-pointer text-sm hover:bg-gray-100", {
           "bg-gray-100": isActive,
@@ -35,6 +37,12 @@ export default function MainLayout() {
       setSelectedMenu(menu);
     }
   };
+
+  useEffect(() => {
+    if (selectedMenu) {
+      navigate({ to: selectedMenu.items[0].href });
+    }
+  }, [selectedMenu, navigate]);
 
   return (
     <main className="grid grid-cols-[220px_1fr] h-screen">

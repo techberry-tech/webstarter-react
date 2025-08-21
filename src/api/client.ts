@@ -1,5 +1,3 @@
-import { ROUTE_PATHS } from "@/core/router/config";
-import { router } from "@/core/router/router";
 import { notifications } from "@mantine/notifications";
 import axios, { type AxiosRequestConfig } from "axios";
 
@@ -35,7 +33,7 @@ export const apiCall = async <T = any>({ validateUnauthorized = true, ...rest }:
     if (axios.isAxiosError(error)) {
       // Handle 401 Unauthorized error
       if (validateUnauthorized === true && error.response?.status === 401) {
-        router.navigate(ROUTE_PATHS.COMMON.LOGIN);
+        // router.navigate(ROUTE_PATHS.COMMON.LOGIN);
         notifications.show({
           color: "red",
           message: "Session expired. Please log in again.",

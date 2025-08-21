@@ -1,8 +1,7 @@
 import useAuthStatus from "@/api/auth/use-auth-status";
 import { Loader } from "@mantine/core";
-import { Navigate } from "react-router";
+import { Navigate } from "@tanstack/react-router";
 import MainLayout from "../../components/layout/main-layout";
-import { ROUTE_PATHS } from "../router/config";
 
 export default function ProtectedRoutes() {
   const { isPending, isError } = useAuthStatus();
@@ -17,7 +16,7 @@ export default function ProtectedRoutes() {
   }
 
   if (isError) {
-    return <Navigate to={ROUTE_PATHS.COMMON.LOGIN} replace state={{ logout: true }} />;
+    return <Navigate to="/" replace search={{ logout: true }} />;
   }
 
   return <MainLayout />;
