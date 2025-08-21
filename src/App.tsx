@@ -1,12 +1,12 @@
-import { router } from "@/core/router/router";
 import { MantineProvider } from "@mantine/core";
-import { RouterProvider } from "react-router";
 
 import "@mantine/core/styles.css";
 // ‼️ import notifications styles after core package styles
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RouterProvider } from "@tanstack/react-router";
+import { router } from "./core/router/router";
 import { themeConfig } from "./core/theme/theme";
 
 const queryClient = new QueryClient({

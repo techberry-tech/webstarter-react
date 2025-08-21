@@ -1,5 +1,7 @@
-import { ROUTE_PATHS } from "@/core/router/config";
 import { IconDashboard, IconUsersGroup, type Icon, type IconProps } from "@tabler/icons-react";
+import type { LinkProps } from "@tanstack/react-router";
+
+type AnyRoutePath = LinkProps["to"];
 
 export interface MyMenu {
   title: string;
@@ -9,7 +11,7 @@ export interface MyMenu {
 export interface MyMenuItem {
   icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>>;
   label: string;
-  href: string;
+  href: AnyRoutePath;
 }
 
 export const MENUS: MyMenu[] = [
@@ -19,7 +21,7 @@ export const MENUS: MyMenu[] = [
       {
         icon: IconDashboard,
         label: "Dashboard",
-        href: ROUTE_PATHS.FLIGHT_BOOKING.DASHBOARD,
+        href: "/flight-booking/dashboard",
       },
     ],
   },
@@ -29,7 +31,7 @@ export const MENUS: MyMenu[] = [
       {
         icon: IconUsersGroup,
         label: "Users",
-        href: ROUTE_PATHS.ACCOUNTING.USERS,
+        href: "/accounting/users",
       },
     ],
   },

@@ -1,16 +1,13 @@
-import NotFound from "@/pages/common/404/404";
-import { createBrowserRouter } from "react-router";
-import ProtectedRoutes from "../auth/protected";
-import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "./config";
+// Import the generated route tree
+import { routeTree } from "@/routeTree.gen";
+import { createRouter } from "@tanstack/react-router";
 
-export const router = createBrowserRouter([
-  ...PUBLIC_ROUTES,
-  {
-    Component: ProtectedRoutes,
-    children: PROTECTED_ROUTES,
-  },
-  {
-    path: "*",
-    Component: NotFound,
-  },
-]);
+// Create a new router instance
+export const router = createRouter({ routeTree });
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}

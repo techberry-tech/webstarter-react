@@ -1,4 +1,3 @@
-import { ROUTE_PATHS } from "@/core/router/config";
 import { router } from "@/core/router/router";
 import { notifications } from "@mantine/notifications";
 import axios, { type AxiosRequestConfig } from "axios";
@@ -23,7 +22,7 @@ export type APIResponse<T> = APISuccess<T> | APIError;
 
 export type APICallConfig = AxiosRequestConfig & { validateUnauthorized?: boolean };
 
-export const apiCall = async <T = any>({ validateUnauthorized = true, ...rest }: APICallConfig): Promise<APIResponse<T>> => {
+export const makeRequest = async <T = any>({ validateUnauthorized = true, ...rest }: APICallConfig): Promise<APIResponse<T>> => {
   try {
     const response: APIResponse<T> = await client(rest);
     return {
@@ -35,7 +34,7 @@ export const apiCall = async <T = any>({ validateUnauthorized = true, ...rest }:
     if (axios.isAxiosError(error)) {
       // Handle 401 Unauthorized error
       if (validateUnauthorized === true && error.response?.status === 401) {
-        router.navigate(ROUTE_PATHS.COMMON.LOGIN);
+        router.navigate({ to: "/", search: { logout: true } });
         notifications.show({
           color: "red",
           message: "Session expired. Please log in again.",

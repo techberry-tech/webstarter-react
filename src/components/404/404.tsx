@@ -1,6 +1,5 @@
-import { ROUTE_PATHS } from "@/core/router/config";
 import { Button, Container, Group, Text, Title } from "@mantine/core";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 import classes from "./404.module.css";
 
 export default function NotFound() {
@@ -21,7 +20,7 @@ export default function NotFound() {
             this is an error contact support.
           </Text>
           <Group justify="center" mt={12}>
-            <Button size="md" onClick={() => navigate(ROUTE_PATHS.LANDING)}>
+            <Button variant="default" size="md" onClick={() => navigate({ to: "/landing" })}>
               Take me back to home page
             </Button>
           </Group>
