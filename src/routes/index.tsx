@@ -6,19 +6,14 @@ import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Login,
-});
-
-export default function Login() {
-interface Search {
-  logout?: boolean;
-}
-
-export const Route = createFileRoute("/")({
-  component: Login,
   validateSearch: (search: Record<string, unknown>): Search => ({
     logout: typeof search.logout === "string" ? search.logout === "true" : undefined,
   }),
 });
+
+interface Search {
+  logout?: boolean;
+}
 
 export default function Login() {
   const search = Route.useSearch();
