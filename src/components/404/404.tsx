@@ -20,7 +20,7 @@ export default function NotFound() {
             this is an error contact support.
           </Text>
           <Group justify="center" mt={12}>
-            <Button size="md" onClick={() => navigate({ to: "/landing" })}>
+            <Button variant="default" size="md" onClick={() => navigate({ to: "/landing" })}>
               Take me back to home page
             </Button>
           </Group>

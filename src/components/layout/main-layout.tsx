@@ -78,7 +78,7 @@ export default function MainLayout() {
           </Menu>
         </div>
         <Divider />
-        <div className="flex flex-col p-4 gap-2 grow">
+        <div className="flex flex-col p-4 gap-2 h-[calc(100vh-165px)] overflow-y-auto">
           <Text size="xs" fw={500} c="dimmed">
             Menu
           </Text>
