@@ -82,7 +82,9 @@ async function startServer() {
       return c.json({ error: "Method Not Allowed" }, 405)
     }
 
-    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * (250 - 70 + 1)) + 70)) // Simulate random delay between 70ms and 250ms
+    await new Promise(resolve => setTimeout(resolve,
+      Math.floor(Math.random() * (config.responseTime.max - config.responseTime.min + 1)) + config.responseTime.min)
+    ) // Simulate random delay
 
     return c.json(service.response.body, service.response.status)
   })
@@ -499,7 +501,14 @@ function renderDocs(config) {
  */
 
 /**
+ * @typedef {Object} ResponseTime
+ * @property {number} min - The minimum response time in ms
+ * @property {number} max - The maximum response time in ms
+ */
+
+/**
  * @typedef {Object} Config
+ * @property {ResponseTime} responseTime - The response time for the API
  * @property {string} baseURI - The base URI for the API
  * @property {Array<User>} users - The list of users for authentication
  * @property {Object<string, ServiceConfig>} services - The services available in the API

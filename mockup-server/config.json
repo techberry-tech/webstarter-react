@@ -1,4 +1,8 @@
 {
+  "responseTime": {
+    "min": 100,
+    "max": 500
+  },
   "baseURI": "",
   "users": [
     {
