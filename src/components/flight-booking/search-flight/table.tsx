@@ -22,11 +22,11 @@ export default function SearchFlightTable({ data = [] }: SearchFlightTableProps)
     <div className="mt-3">
       <h1 className="text-lg font-semibold">Search Result</h1>
       {!hasData ? (
-        <Text c="dimmed" size="sm" mt="xs">
+        <Text c="dimmed" size="sm">
           No results
         </Text>
       ) : (
-        <Table striped horizontalSpacing="md" verticalSpacing="sm">
+        <Table striped horizontalSpacing="md">
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Flight Number</Table.Th>
