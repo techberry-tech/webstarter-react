@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PathlessLayoutLandingRouteImport } from './routes/_pathlessLayout/landing'
-import { Route as PathlessLayoutFlightBookingDashboardRouteImport } from './routes/_pathlessLayout/flight-booking/dashboard'
+import { Route as PathlessLayoutFlightBookingSearchFlightRouteImport } from './routes/_pathlessLayout/flight-booking/search-flight'
 import { Route as PathlessLayoutAccountingUsersRouteImport } from './routes/_pathlessLayout/accounting/users'
 
 const PathlessLayoutRoute = PathlessLayoutRouteImport.update({
@@ -29,10 +29,10 @@ const PathlessLayoutLandingRoute = PathlessLayoutLandingRouteImport.update({
   path: '/landing',
   getParentRoute: () => PathlessLayoutRoute,
 } as any)
-const PathlessLayoutFlightBookingDashboardRoute =
-  PathlessLayoutFlightBookingDashboardRouteImport.update({
-    id: '/flight-booking/dashboard',
-    path: '/flight-booking/dashboard',
+const PathlessLayoutFlightBookingSearchFlightRoute =
+  PathlessLayoutFlightBookingSearchFlightRouteImport.update({
+    id: '/flight-booking/search-flight',
+    path: '/flight-booking/search-flight',
     getParentRoute: () => PathlessLayoutRoute,
   } as any)
 const PathlessLayoutAccountingUsersRoute =
@@ -46,13 +46,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/landing': typeof PathlessLayoutLandingRoute
   '/accounting/users': typeof PathlessLayoutAccountingUsersRoute
-  '/flight-booking/dashboard': typeof PathlessLayoutFlightBookingDashboardRoute
+  '/flight-booking/search-flight': typeof PathlessLayoutFlightBookingSearchFlightRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/landing': typeof PathlessLayoutLandingRoute
   '/accounting/users': typeof PathlessLayoutAccountingUsersRoute
-  '/flight-booking/dashboard': typeof PathlessLayoutFlightBookingDashboardRoute
+  '/flight-booking/search-flight': typeof PathlessLayoutFlightBookingSearchFlightRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -60,7 +60,7 @@ export interface FileRoutesById {
   '/_pathlessLayout': typeof PathlessLayoutRouteWithChildren
   '/_pathlessLayout/landing': typeof PathlessLayoutLandingRoute
   '/_pathlessLayout/accounting/users': typeof PathlessLayoutAccountingUsersRoute
-  '/_pathlessLayout/flight-booking/dashboard': typeof PathlessLayoutFlightBookingDashboardRoute
+  '/_pathlessLayout/flight-booking/search-flight': typeof PathlessLayoutFlightBookingSearchFlightRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -68,16 +68,16 @@ export interface FileRouteTypes {
     | '/'
     | '/landing'
     | '/accounting/users'
-    | '/flight-booking/dashboard'
+    | '/flight-booking/search-flight'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/landing' | '/accounting/users' | '/flight-booking/dashboard'
+  to: '/' | '/landing' | '/accounting/users' | '/flight-booking/search-flight'
   id:
     | '__root__'
     | '/'
     | '/_pathlessLayout'
     | '/_pathlessLayout/landing'
     | '/_pathlessLayout/accounting/users'
-    | '/_pathlessLayout/flight-booking/dashboard'
+    | '/_pathlessLayout/flight-booking/search-flight'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -108,11 +108,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutLandingRouteImport
       parentRoute: typeof PathlessLayoutRoute
     }
-    '/_pathlessLayout/flight-booking/dashboard': {
-      id: '/_pathlessLayout/flight-booking/dashboard'
-      path: '/flight-booking/dashboard'
-      fullPath: '/flight-booking/dashboard'
-      preLoaderRoute: typeof PathlessLayoutFlightBookingDashboardRouteImport
+    '/_pathlessLayout/flight-booking/search-flight': {
+      id: '/_pathlessLayout/flight-booking/search-flight'
+      path: '/flight-booking/search-flight'
+      fullPath: '/flight-booking/search-flight'
+      preLoaderRoute: typeof PathlessLayoutFlightBookingSearchFlightRouteImport
       parentRoute: typeof PathlessLayoutRoute
     }
     '/_pathlessLayout/accounting/users': {
@@ -128,14 +128,14 @@ declare module '@tanstack/react-router' {
 interface PathlessLayoutRouteChildren {
   PathlessLayoutLandingRoute: typeof PathlessLayoutLandingRoute
   PathlessLayoutAccountingUsersRoute: typeof PathlessLayoutAccountingUsersRoute
-  PathlessLayoutFlightBookingDashboardRoute: typeof PathlessLayoutFlightBookingDashboardRoute
+  PathlessLayoutFlightBookingSearchFlightRoute: typeof PathlessLayoutFlightBookingSearchFlightRoute
 }
 
 const PathlessLayoutRouteChildren: PathlessLayoutRouteChildren = {
   PathlessLayoutLandingRoute: PathlessLayoutLandingRoute,
   PathlessLayoutAccountingUsersRoute: PathlessLayoutAccountingUsersRoute,
-  PathlessLayoutFlightBookingDashboardRoute:
-    PathlessLayoutFlightBookingDashboardRoute,
+  PathlessLayoutFlightBookingSearchFlightRoute:
+    PathlessLayoutFlightBookingSearchFlightRoute,
 }
 
 const PathlessLayoutRouteWithChildren = PathlessLayoutRoute._addFileChildren(

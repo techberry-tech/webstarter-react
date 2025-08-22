@@ -5,5 +5,5 @@ export const Route = createFileRoute("/_pathlessLayout/landing")({
 });
 
 function RouteComponent() {
-  return <Navigate to="/flight-booking/dashboard" replace />;
+  return <Navigate to="/flight-booking/search-flight" replace />;
 }

@@ -67,7 +67,7 @@ async function startServer() {
   })
 
   // Dynamic routes here
-  app.all('*', (c) => {
+  app.all('*', async (c) => {
     const path = c.req.path
     const method = c.req.method
     /**
@@ -81,6 +81,8 @@ async function startServer() {
     if (service.method.toUpperCase() !== method) {
       return c.json({ error: "Method Not Allowed" }, 405)
     }
+
+    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * (250 - 70 + 1)) + 70)) // Simulate random delay between 70ms and 250ms
 
     return c.json(service.response.body, service.response.status)
   })

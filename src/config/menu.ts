@@ -1,4 +1,4 @@
-import { IconDashboard, IconUsersGroup, type Icon, type IconProps } from "@tabler/icons-react";
+import { IconSearch, IconUsersGroup, type Icon, type IconProps } from "@tabler/icons-react";
 import type { LinkProps } from "@tanstack/react-router";
 
 type AnyRoutePath = LinkProps["to"];
@@ -19,9 +19,9 @@ export const MENUS: MyMenu[] = [
     title: "Flight Booking",
     items: [
       {
-        icon: IconDashboard,
-        label: "Dashboard",
-        href: "/flight-booking/dashboard",
+        icon: IconSearch,
+        label: "Search Flights",
+        href: "/flight-booking/search-flight",
       },
     ],
   },

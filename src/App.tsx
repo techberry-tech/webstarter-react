@@ -2,6 +2,7 @@ import { MantineProvider } from "@mantine/core";
 
 import "@mantine/core/styles.css";
 // ‼️ import notifications styles after core package styles
+import "@mantine/dates/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
