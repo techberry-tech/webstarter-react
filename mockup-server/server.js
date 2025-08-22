@@ -69,12 +69,17 @@ async function startServer() {
   // Dynamic routes here
   app.all('*', (c) => {
     const path = c.req.path
+    const method = c.req.method
     /**
      * @type {ServiceConfig | undefined}
      */
     const service = config.services[path]
     if (service == null) {
       return c.json({ error: "Not Found" }, 404)
+    }
+
+    if (service.method.toUpperCase() !== method) {
+      return c.json({ error: "Method Not Allowed" }, 405)
     }
 
     return c.json(service.response.body, service.response.status)
