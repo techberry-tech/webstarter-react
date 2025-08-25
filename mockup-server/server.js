@@ -11,15 +11,29 @@ const mockJWTSecret = 'mock-secret-key'
 const cookieName = 'wst-runtime-session'
 
 async function startServer() {
-  const config = await loadConfig();
-  const openAPI = convertToOpenAPI(config.services);
+  /**
+   * @type {Config}
+   */
+  const config = await loadJSON('config.json');
+  const openAPI = await loadJSON('openapi.json')
+  if (config.openapi) {
+    openAPI.tags.unshift({ name: "Authentication", description: "You must authentication before access other APIs" })
+    openAPI.paths = { ...config.openapi.paths, ...openAPI.paths, }
+  }
   const app = new Hono()
   app.use(logger())
   // Public routes
-  app.get('/open-api-converted-raw', (c) => {
+  app.get('/openapi-json', (c) => {
     return c.json(openAPI)
   })
-  app.get('/docs', Scalar({ url: '/open-api-converted-raw', hiddenClients: true, hideClientButton: true, hideDownloadButton: true }))
+  app.get('/openapi', Scalar({
+    url: '/openapi-json',
+    hiddenClients: true,
+    hideClientButton: true,
+    hideDownloadButton: true,
+    expandAllResponses: true,
+    defaultOpenAllTags: true,
+  }))
   app.post('/api/auth/login', async (c) => {
     const { username, password, return_token_in_response } = await c.req.json()
     const user = config.users.find(u => u.username === username && u.password === password)
@@ -72,23 +86,33 @@ async function startServer() {
   app.all('*', async (c) => {
     const path = c.req.path
     const method = c.req.method
-    /**
-     * @type {ServiceConfig | undefined}
-     */
-    const service = config.services[path]
-    if (service == null) {
-      return c.json({ error: "Not Found" }, 404)
+    const prefer = c.req.header('Prefer')
+    let preferStatus = "200";
+    let preferContentType = "application/json"
+    if (prefer) {
+      const statusMatch = prefer.match(/status=(\d+)/)
+      if (statusMatch) {
+        preferStatus = statusMatch[1]
+      }
+
+      const contentTypeMatch = prefer.match(/type=(\w+)/)
+      if (contentTypeMatch) {
+        preferContentType = contentTypeMatch[1]
+      }
     }
 
-    if (service.method.toUpperCase() !== method) {
-      return c.json({ error: "Method Not Allowed" }, 405)
+    const service = openAPI.paths[path]?.[method.toLowerCase()]
+    if (service == null) {
+      return c.json({ error: "Not Found" }, 404)
     }
 
     await new Promise(resolve => setTimeout(resolve,
       Math.floor(Math.random() * (config.responseTime.max - config.responseTime.min + 1)) + config.responseTime.min)
     ) // Simulate random delay
 
-    return c.json(service.response.body, service.response.status)
+    const returnStatus = parseInt(preferStatus, 10)
+    return c.json(service.responses?.[preferStatus]?.content?.[preferContentType]?.example || {}, isNaN(returnStatus) ? 503 : returnStatus)
+
   })
 
   const server = serve({
@@ -125,10 +149,11 @@ async function createJWT(payload) {
 
 /**
  * Loads the API configuration from the config.json file.
+ * @template T
  * @param {string} fileName - The name of the configuration file
- * @returns {Promise<Config>} - Returns a promise that resolves to the configuration object
+ * @returns {Promise<T>} - Returns a promise that resolves to the configuration object
  */
-async function loadConfig(fileName = 'config.json') {
+async function loadJSON(fileName) {
   try {
     const rawConfig = await readFile(path.join(import.meta.dirname, fileName), 'utf-8');
     return JSON.parse(rawConfig);
@@ -137,88 +162,6 @@ async function loadConfig(fileName = 'config.json') {
   }
 }
 
-/**
- * Convert the original config object to an OpenAPI 3.1 JSON with inline examples.
- * @param {ServiceConfig} config - Your original config object.
- * @returns {any} OpenAPI JSON object.
- */
-function convertToOpenAPI(config) {
-  const paths = {};
-
-  for (const [path, svc] of Object.entries(config || {})) {
-    const method = (svc.method || "POST").toLowerCase();
-    const mediaType = svc.request?.content_type || "application/json";
-
-    // request example: default to {}
-    const requestExample =
-      svc.request && svc.request.body && "content" in svc.request.body
-        ? svc.request.body.content
-        : {};
-
-    // response status + example
-    const status = String(svc.response?.status || 200);
-    const responseExample = svc.response?.body ?? {};
-
-    // build operation
-    const operation = {
-      summary: svc.description || svc.name || "",
-      requestBody: {
-        required: true,
-        content: {
-          [mediaType]: {
-            // IMPORTANT for Scalar to render: provide a schema
-            schema: { type: "object" },
-            example: requestExample
-          }
-        }
-      },
-      responses: {
-        [status]: {
-          description: `${svc.name || "Response"}`,
-          content: {
-            [mediaType]: {
-              // IMPORTANT for Scalar to render: provide a schema
-              schema: { type: "object" },
-              // Named example tends to surface better in some UIs
-              examples: {
-                success: { value: responseExample }
-              }
-            }
-          }
-        }
-      }
-    };
-
-    // attach to paths
-    if (!paths[path]) paths[path] = {};
-    paths[path][method] = operation;
-  }
-
-  return {
-    openapi: "3.1.0",
-    info: {
-      title: "Project Services API",
-      version: "1.0.0"
-    },
-    servers: [{ url: "/" }],
-    paths
-  };
-}
-
-
-/**
- * @typedef {Object} ServiceConfig
- * @property {string} name - The name of the service
- * @property {string} description - A brief description of the service
- * @property {string} method - The HTTP method used by the service (e.g., GET, POST)
- * @property {ResponseConfig} response
- */
-
-/**
- * @typedef {Object} ResponseConfig
- * @property {number} status - The HTTP status code for the response
- * @property {Object<string, any>} body - The body of the response, typically in JSON format
- */
 
 /**
  * @typedef {Object} User
@@ -239,5 +182,5 @@ function convertToOpenAPI(config) {
  * @property {ResponseTime} responseTime - The response time for the API
  * @property {string} baseURI - The base URI for the API
  * @property {Array<User>} users - The list of users for authentication
- * @property {Object<string, ServiceConfig>} services - The services available in the API
+ * @property {any} openapi - The OpenAPI specification
  */

@@ -1,0 +1,695 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "My Project",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "iConnector"
+    }
+  ],
+  "paths": {
+    "/ic/project/services/WS_getCityList": {
+      "post": {
+        "summary": "WS_getCityList",
+        "deprecated": false,
+        "description": "",
+        "tags": ["iConnector"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                },
+                "required": ["content"]
+              },
+              "example": {
+                "content": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Returncode": {
+                      "type": "string"
+                    },
+                    "Returnscreen": {
+                      "type": "string"
+                    },
+                    "Runmessage": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "object",
+                      "properties": {
+                        "cityList": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "cityInitial": {
+                                "type": "string"
+                              },
+                              "cityName": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["cityInitial", "cityName"]
+                          }
+                        },
+                        "customerName": {
+                          "type": "string"
+                        },
+                        "flightList": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "dayOfWeek": {
+                                "type": "string"
+                              },
+                              "departTime": {
+                                "type": "string"
+                              },
+                              "arrivalTime": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              },
+                              "flightNumber": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["dayOfWeek", "departTime", "arrivalTime", "price", "flightNumber"]
+                          }
+                        }
+                      },
+                      "required": ["cityList", "customerName", "flightList"]
+                    },
+                    "ewitoken": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["Returncode", "Returnscreen", "Runmessage", "content", "ewitoken", "version"]
+                },
+                "example": {
+                  "Returncode": "EWI-0000I",
+                  "Returnscreen": "",
+                  "Runmessage": "Your request for the container has been executed successfully.",
+                  "content": {
+                    "cityList": [
+                      {
+                        "cityInitial": "ABY",
+                        "cityName": "Albany"
+                      },
+                      {
+                        "cityInitial": "ALB",
+                        "cityName": "Albuquerque"
+                      },
+                      {
+                        "cityInitial": "ANC",
+                        "cityName": "Anchorage"
+                      },
+                      {
+                        "cityInitial": "ATL",
+                        "cityName": "Atlanta"
+                      },
+                      {
+                        "cityInitial": "ATC",
+                        "cityName": "Atlantic City"
+                      },
+                      {
+                        "cityInitial": "BLT",
+                        "cityName": "Baltimore"
+                      },
+                      {
+                        "cityInitial": "BLL",
+                        "cityName": "Billings"
+                      },
+                      {
+                        "cityInitial": "BRM",
+                        "cityName": "Birmingham"
+                      },
+                      {
+                        "cityInitial": "BMK",
+                        "cityName": "Bismarck"
+                      },
+                      {
+                        "cityInitial": "BOS",
+                        "cityName": "Boise"
+                      },
+                      {
+                        "cityInitial": "BST",
+                        "cityName": "Boston"
+                      },
+                      {
+                        "cityInitial": "BOZ",
+                        "cityName": "Bozeman"
+                      },
+                      {
+                        "cityInitial": "BRW",
+                        "cityName": "Brownsville"
+                      },
+                      {
+                        "cityInitial": "BUF",
+                        "cityName": "Buffalo"
+                      },
+                      {
+                        "cityInitial": "BUR",
+                        "cityName": "Burlington"
+                      },
+                      {
+                        "cityInitial": "CHO",
+                        "cityName": "Charlotte"
+                      },
+                      {
+                        "cityInitial": "CHG",
+                        "cityName": "Chicago"
+                      },
+                      {
+                        "cityInitial": "CCI",
+                        "cityName": "Cincinnati"
+                      },
+                      {
+                        "cityInitial": "CLE",
+                        "cityName": "Cleveland"
+                      },
+                      {
+                        "cityInitial": "COL",
+                        "cityName": "Columbus"
+                      },
+                      {
+                        "cityInitial": "DFW",
+                        "cityName": "Dallas"
+                      },
+                      {
+                        "cityInitial": "DEN",
+                        "cityName": "Denver"
+                      },
+                      {
+                        "cityInitial": "DMO",
+                        "cityName": "Des Moines"
+                      },
+                      {
+                        "cityInitial": "DET",
+                        "cityName": "Detroit"
+                      },
+                      {
+                        "cityInitial": "EUG",
+                        "cityName": "Eugene"
+                      },
+                      {
+                        "cityInitial": "FAI",
+                        "cityName": "Fairbanks"
+                      },
+                      {
+                        "cityInitial": "FLG",
+                        "cityName": "Flagstaff"
+                      },
+                      {
+                        "cityInitial": "FRA",
+                        "cityName": "Frankfurt"
+                      },
+                      {
+                        "cityInitial": "GRR",
+                        "cityName": "Grand Rapids"
+                      },
+                      {
+                        "cityInitial": "GRN",
+                        "cityName": "Greensboro"
+                      },
+                      {
+                        "cityInitial": "HFR",
+                        "cityName": "Hartford"
+                      },
+                      {
+                        "cityInitial": "HON",
+                        "cityName": "Honolulu"
+                      },
+                      {
+                        "cityInitial": "HOU",
+                        "cityName": "Houston"
+                      },
+                      {
+                        "cityInitial": "HUN",
+                        "cityName": "Huntsville"
+                      },
+                      {
+                        "cityInitial": "IND",
+                        "cityName": "Indianapolis"
+                      },
+                      {
+                        "cityInitial": "JFL",
+                        "cityName": "Jacksonville"
+                      },
+                      {
+                        "cityInitial": "KSC",
+                        "cityName": "Kansas City"
+                      },
+                      {
+                        "cityInitial": "KNO",
+                        "cityName": "Knoxville"
+                      },
+                      {
+                        "cityInitial": "LEX",
+                        "cityName": "Lexington"
+                      },
+                      {
+                        "cityInitial": "LNC",
+                        "cityName": "Lincoln"
+                      },
+                      {
+                        "cityInitial": "LRK",
+                        "cityName": "Little Rock"
+                      },
+                      {
+                        "cityInitial": "LAX",
+                        "cityName": "Los Angeles"
+                      },
+                      {
+                        "cityInitial": "LOU",
+                        "cityName": "Louisville"
+                      },
+                      {
+                        "cityInitial": "MAD",
+                        "cityName": "Madison"
+                      },
+                      {
+                        "cityInitial": "MCW",
+                        "cityName": "Mason City"
+                      },
+                      {
+                        "cityInitial": "MEM",
+                        "cityName": "Memphis"
+                      },
+                      {
+                        "cityInitial": "MEX",
+                        "cityName": "Mexico City"
+                      },
+                      {
+                        "cityInitial": "MIM",
+                        "cityName": "Miami"
+                      },
+                      {
+                        "cityInitial": "MLW",
+                        "cityName": "Milwaukee"
+                      },
+                      {
+                        "cityInitial": "MSP",
+                        "cityName": "Minneapolis"
+                      },
+                      {
+                        "cityInitial": "MOL",
+                        "cityName": "Moline"
+                      },
+                      {
+                        "cityInitial": "MON",
+                        "cityName": "Montgomery"
+                      },
+                      {
+                        "cityInitial": "MTL",
+                        "cityName": "Montreal"
+                      },
+                      {
+                        "cityInitial": "NSH",
+                        "cityName": "Nashville"
+                      },
+                      {
+                        "cityInitial": "NAK",
+                        "cityName": "Newark"
+                      },
+                      {
+                        "cityInitial": "NOR",
+                        "cityName": "Norfolk"
+                      },
+                      {
+                        "cityInitial": "OKL",
+                        "cityName": "Oklahoma City"
+                      },
+                      {
+                        "cityInitial": "OMA",
+                        "cityName": "Omaha"
+                      },
+                      {
+                        "cityInitial": "ORL",
+                        "cityName": "Orlando"
+                      },
+                      {
+                        "cityInitial": "PHL",
+                        "cityName": "Philadelphia"
+                      },
+                      {
+                        "cityInitial": "PHE",
+                        "cityName": "Phoenix"
+                      },
+                      {
+                        "cityInitial": "PIT",
+                        "cityName": "Pittsburgh"
+                      },
+                      {
+                        "cityInitial": "PRT",
+                        "cityName": "Portland"
+                      },
+                      {
+                        "cityInitial": "PRI",
+                        "cityName": "Providence"
+                      },
+                      {
+                        "cityInitial": "PUB",
+                        "cityName": "Pueblo"
+                      },
+                      {
+                        "cityInitial": "RLG",
+                        "cityName": "Raleigh"
+                      },
+                      {
+                        "cityInitial": "RPC",
+                        "cityName": "Rapid City"
+                      },
+                      {
+                        "cityInitial": "RCM",
+                        "cityName": "Richmond"
+                      },
+                      {
+                        "cityInitial": "RCH",
+                        "cityName": "Rochester, MN"
+                      },
+                      {
+                        "cityInitial": "SAC",
+                        "cityName": "Sacramento"
+                      },
+                      {
+                        "cityInitial": "SLU",
+                        "cityName": "Salt Lake City"
+                      },
+                      {
+                        "cityInitial": "SAT",
+                        "cityName": "San Antonio"
+                      },
+                      {
+                        "cityInitial": "SND",
+                        "cityName": "San Diego"
+                      },
+                      {
+                        "cityInitial": "SNJ",
+                        "cityName": "San Jose"
+                      },
+                      {
+                        "cityInitial": "SAV",
+                        "cityName": "Savannah"
+                      },
+                      {
+                        "cityInitial": "SCT",
+                        "cityName": "Scranton"
+                      },
+                      {
+                        "cityInitial": "SEA",
+                        "cityName": "Seattle"
+                      },
+                      {
+                        "cityInitial": "SOF",
+                        "cityName": "Sioux Falls"
+                      },
+                      {
+                        "cityInitial": "SPO",
+                        "cityName": "Spokane"
+                      },
+                      {
+                        "cityInitial": "STL",
+                        "cityName": "St. Louis"
+                      },
+                      {
+                        "cityInitial": "STP",
+                        "cityName": "St. Petersburg"
+                      },
+                      {
+                        "cityInitial": "SYR",
+                        "cityName": "Syracuse"
+                      },
+                      {
+                        "cityInitial": "TCO",
+                        "cityName": "Tacoma"
+                      },
+                      {
+                        "cityInitial": "TOR",
+                        "cityName": "Toronto"
+                      },
+                      {
+                        "cityInitial": "TRE",
+                        "cityName": "Trenton"
+                      },
+                      {
+                        "cityInitial": "TUC",
+                        "cityName": "Tucson"
+                      },
+                      {
+                        "cityInitial": "TUL",
+                        "cityName": "Tulsa"
+                      },
+                      {
+                        "cityInitial": "VCV",
+                        "cityName": "Vancouver"
+                      },
+                      {
+                        "cityInitial": "WSH",
+                        "cityName": "Washington DC"
+                      },
+                      {
+                        "cityInitial": "WCH",
+                        "cityName": "Wichita"
+                      },
+                      {
+                        "cityInitial": "WIN",
+                        "cityName": "Winnipeg"
+                      }
+                    ],
+                    "customerName": ""
+                  },
+                  "ewitoken": "N8AFNDGNEP",
+                  "version": "2.0"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/ic/project/services/WS_SearchFlightList": {
+      "post": {
+        "summary": "WS_SearchFlightList",
+        "deprecated": false,
+        "description": "",
+        "tags": ["iConnector"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "object",
+                    "properties": {
+                      "day": {
+                        "type": "string",
+                        "maxLength": 2
+                      },
+                      "fromCity": {
+                        "type": "string"
+                      },
+                      "month": {
+                        "type": "string",
+                        "maxLength": 2
+                      },
+                      "toCity": {
+                        "type": "string"
+                      },
+                      "year": {
+                        "type": "string",
+                        "maxLength": 4
+                      }
+                    },
+                    "required": ["day", "fromCity", "month", "toCity"]
+                  }
+                },
+                "required": ["content"]
+              },
+              "example": {
+                "content": {
+                  "day": "31",
+                  "fromCity": "Flagstaff",
+                  "month": "12",
+                  "toCity": "Boston",
+                  "year": "2025"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Returncode": {
+                      "type": "string"
+                    },
+                    "Returnscreen": {
+                      "type": "string"
+                    },
+                    "Runmessage": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "object",
+                      "properties": {
+                        "flightList": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "dayOfWeek": {
+                                "type": "string"
+                              },
+                              "departTime": {
+                                "type": "string"
+                              },
+                              "arrivalTime": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "string"
+                              },
+                              "flightNumber": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["dayOfWeek", "departTime", "arrivalTime", "price", "flightNumber"]
+                          }
+                        }
+                      },
+                      "required": ["flightList"]
+                    },
+                    "ewitoken": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["Returncode", "Returnscreen", "Runmessage", "content", "ewitoken", "version"]
+                },
+                "example": {
+                  "Returncode": "EWI-0000I",
+                  "Returnscreen": "",
+                  "Runmessage": "Your request for the container has been executed successfully.",
+                  "content": {
+                    "flightList": [
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "07:54 AM",
+                        "arrivalTime": "09:54 AM",
+                        "price": "169",
+                        "flightNumber": "3143155"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "08:57 AM",
+                        "arrivalTime": "10:57 AM",
+                        "price": "179",
+                        "flightNumber": "3243156"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "09:59 AM",
+                        "arrivalTime": "11:59 AM",
+                        "price": "199",
+                        "flightNumber": "3343157"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "11:02 AM",
+                        "arrivalTime": "01:02 PM",
+                        "price": "199",
+                        "flightNumber": "3443158"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "12:48 PM",
+                        "arrivalTime": "02:48 PM",
+                        "price": "299",
+                        "flightNumber": "3543159"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "01:54 PM",
+                        "arrivalTime": "03:54 PM",
+                        "price": "299",
+                        "flightNumber": "3643160"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "03:22 PM",
+                        "arrivalTime": "05:22 PM",
+                        "price": "299",
+                        "flightNumber": "3743161"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "05:23 PM",
+                        "arrivalTime": "07:23 PM",
+                        "price": "269",
+                        "flightNumber": "3843162"
+                      },
+                      {
+                        "dayOfWeek": "We",
+                        "departTime": "07:21 PM",
+                        "arrivalTime": "09:21 PM",
+                        "price": "199",
+                        "flightNumber": "3943163"
+                      }
+                    ]
+                  },
+                  "ewitoken": "H8AFMH851E",
+                  "version": "2.0"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
