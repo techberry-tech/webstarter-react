@@ -15,7 +15,7 @@
   "services": {
     "/ic/project/services/WS_getCityList": {
       "name": "WS_getCityList",
-      "description": "Service for getting city list",
+      "description": "Get city list",
       "method": "POST",
       "request": {
         "content_type": "application/json",
@@ -405,7 +405,7 @@
     },
     "/ic/project/services/WS_SearchFlightList": {
       "name": "WS_SearchFlightList",
-      "description": "Service for searching flight lists",
+      "description": "Search flight list",
       "method": "POST",
       "request": {
         "content_type": "application/json",
