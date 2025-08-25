@@ -1,5 +1,5 @@
 import type { CityListItem, SearchFlightForm } from "@/types/flight-booking";
-import { Autocomplete, Button } from "@mantine/core";
+import { Button, Select } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { IconSearch } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,7 +42,7 @@ export default function SearchFlightForm({ isLoading = false, cityList, onSubmit
   return (
     <div>
       <h1 className="text-lg font-semibold">Search Flight</h1>
-      <form className="flex flex-col gap-2" onSubmit={handleSubmit(handleFormSubmit)}>
+      <form className="flex flex-col gap-2 py-3" onSubmit={handleSubmit(handleFormSubmit)}>
         <Controller
           control={control}
           name="date"
@@ -58,14 +58,13 @@ export default function SearchFlightForm({ isLoading = false, cityList, onSubmit
             />
           )}
         />
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <Controller
             control={control}
             name="fromCity"
             rules={{ required: "From city is required" }}
             render={({ field, fieldState }) => (
-              <Autocomplete
-                flex={1}
+              <Select
                 label="From City"
                 placeholder="Select a city"
                 data={cityNames}
@@ -73,6 +72,7 @@ export default function SearchFlightForm({ isLoading = false, cityList, onSubmit
                 value={field.value || ""}
                 onChange={(value) => field.onChange(value)}
                 error={fieldState.error?.message}
+                searchable
               />
             )}
           />
@@ -81,8 +81,7 @@ export default function SearchFlightForm({ isLoading = false, cityList, onSubmit
             name="toCity"
             rules={{ required: "To city is required" }}
             render={({ field, fieldState }) => (
-              <Autocomplete
-                flex={1}
+              <Select
                 label="To City"
                 placeholder="Select a city"
                 data={cityNames}
@@ -90,6 +89,7 @@ export default function SearchFlightForm({ isLoading = false, cityList, onSubmit
                 value={field.value || ""}
                 onChange={(value) => field.onChange(value)}
                 error={fieldState.error?.message}
+                searchable
               />
             )}
           />

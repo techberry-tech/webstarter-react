@@ -20,7 +20,7 @@ export default function SearchFlightTable({ data = [] }: SearchFlightTableProps)
 
   return (
     <div className="mt-3">
-      <h1 className="text-lg font-semibold">Search Result</h1>
+      <h1 className="text-lg font-semibold mb-3">Search Result</h1>
       {!hasData ? (
         <Text c="dimmed" size="sm">
           No results

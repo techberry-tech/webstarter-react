@@ -106,7 +106,9 @@ export default function MainLayout() {
           </Popover>
         </div>
       </nav>
-      <Outlet />
+      <div className="overflow-auto">
+        <Outlet />
+      </div>
     </main>
   );
 }
