@@ -33,6 +33,7 @@ async function startServer() {
     hideDownloadButton: true,
     expandAllResponses: true,
     defaultOpenAllTags: true,
+    pageTitle: 'Mockup Server API',
   }))
   app.post('/api/auth/login', async (c) => {
     const { username, password, return_token_in_response } = await c.req.json()
