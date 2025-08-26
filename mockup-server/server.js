@@ -15,16 +15,16 @@ async function startServer() {
    * @type {Config}
    */
   const config = await loadJSON('config.json');
-  const openAPI = await loadJSON('openapi.json')
+  const openapi = await loadJSON('openapi.json')
   if (config.openapi) {
-    openAPI.tags.unshift({ name: "Authentication", description: "You must authentication before access other APIs" })
-    openAPI.paths = { ...config.openapi.paths, ...openAPI.paths, }
+    openapi.tags.unshift({ name: "Authentication", description: "You must authentication before access other APIs" })
+    openapi.paths = { ...config.openapi.paths, ...openapi.paths, }
   }
   const app = new Hono()
   app.use(logger())
   // Public routes
   app.get('/openapi-json', (c) => {
-    return c.json(openAPI)
+    return c.json(openapi)
   })
   app.get('/openapi', Scalar({
     url: '/openapi-json',
@@ -102,7 +102,7 @@ async function startServer() {
       }
     }
 
-    const service = openAPI.paths[path]?.[method.toLowerCase()]
+    const service = openapi.paths[path]?.[method.toLowerCase()]
     if (service == null) {
       return c.json({ error: "Not Found" }, 404)
     }
