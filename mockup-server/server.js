@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server';
 import { Scalar } from '@scalar/hono-api-reference';
+import Ajv from 'ajv';
 import { Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { logger } from 'hono/logger';
@@ -21,6 +22,8 @@ async function startServer() {
     openapi.paths = { ...config.openapi.paths, ...openapi.paths, }
   }
   const app = new Hono()
+  const ajv = new Ajv()
+  const validators = new Map()
   app.use(logger())
   // Public routes
   app.get('/openapi-json', (c) => {
@@ -107,6 +110,21 @@ async function startServer() {
       return c.json({ error: "Not Found" }, 404)
     }
 
+    // Validate request if schema is available
+    const requestSchema = service.requestBody?.content?.[preferContentType]?.schema
+    if (requestSchema) {
+      const cacheKey = `${path}-${method}-${preferContentType}`
+      let validator = validators.get(cacheKey)
+      if (!validator) {
+        validator = ajv.compile(requestSchema)
+        validators.set(cacheKey, validator)
+      }
+      const isValid = await validator(await c.req.json())
+      if (!isValid) {
+        return c.json({ error: "Bad Request", details: validator.errors }, 400)
+      }
+    }
+
     await new Promise(resolve => setTimeout(resolve,
       Math.floor(Math.random() * (config.responseTime.max - config.responseTime.min + 1)) + config.responseTime.min)
     ) // Simulate random delay
@@ -116,11 +134,14 @@ async function startServer() {
 
   })
 
+  const port = 3001;
   const server = serve({
     fetch: app.fetch,
-    port: 3001,
+    port: port,
     hostname: 'localhost',
   })
+
+  console.log(`Open API Spec http://localhost:${port}/openapi`)
 
   // graceful shutdown
   process.on('SIGINT', () => {

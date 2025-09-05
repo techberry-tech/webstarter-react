@@ -15,9 +15,7 @@ export default function useGetCityList() {
       const response = await makeRequest<GetCityListResponse>({
         method: "POST",
         url: "/ic/project/services/WS_getCityList",
-        data: {
-          content: {},
-        },
+        data: {},
       });
 
       if (!response.success) {
