@@ -1,5 +1,5 @@
-import useGetCityList from "@/api/flight-booking/get-city-list";
-import useSearchFlight from "@/api/flight-booking/search-flight";
+import useGetCityList from "@/api/flight-booking/use-get-city-list";
+import useSearchFlight from "@/api/flight-booking/use-search-flight";
 import SearchFlightForm from "@/components/flight-booking/search-flight/form";
 import SearchFlightTable from "@/components/flight-booking/search-flight/table";
 import { createFileRoute } from "@tanstack/react-router";

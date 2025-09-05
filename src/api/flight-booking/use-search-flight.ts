@@ -11,11 +11,13 @@ interface SearchFlightResponse {
 export default function useSearchFlight() {
   return useMutation({
     mutationKey: ["flightBooking_searchFlight"],
-    mutationFn: async (data: SearchFlightForm) => {
+    mutationFn: async (payload: SearchFlightForm) => {
       const response = await makeRequest<SearchFlightResponse>({
         method: "POST",
         url: "/ic/project/services/WS_SearchFlightList",
-        data,
+        data: {
+          content: payload,
+        },
       });
 
       if (!response.success) {
