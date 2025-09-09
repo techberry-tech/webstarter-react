@@ -245,28 +245,30 @@ src/routes/
 
 #### Route File Pattern
 
-```typescript
-// src/routes/_pathlessLayout/[applicationName]/[featureName].tsx
-import { createFileRoute } from '@tanstack/router-router'
-import { [FeatureComponent] } from '../../../components/[applicationName]/[featureName]/[feature-main]'
+#### Route File Pattern
 
-export const Route = createFileRoute('/_pathlessLayout/[applicationName]/[featureName]')({
-  component: [FeatureComponent],
-  // Optional: Add search params validation
-  validateSearch: (search) => ({
-    page: Number(search.page) || 1,
-    limit: Number(search.limit) || 10,
-  }),
-  // Optional: Add loader for data fetching
-  loader: ({ context }) => {
-    // Pre-fetch data if needed
-  },
+When creating a new page, use a single route file (e.g. `search-flight.tsx`) inside `src/routes/_pathlessLayout/[applicationName]/`. Do not create a separate `{pageName}.tsx` inside `components`—components are only for UI building blocks.
+
+Recommended pattern:
+
+```typescript
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute(
+  '/_pathlessLayout/[applicationName]/[featureName]',
+)({
+  component: RouteComponent,
 })
 
-// Examples:
-// src/routes/_pathlessLayout/flight-booking/search-flight.tsx -> /flight-booking/search-flight
-// src/routes/_pathlessLayout/accounting/users.tsx -> /accounting/users
+function RouteComponent() {
+  return <div>Hello "/_pathlessLayout/[applicationName]/[featureName]"!</div>
+}
 ```
+
+Example:
+`src/routes/_pathlessLayout/flight-booking/search-flight.tsx` is the main file for the `/flight-booking/search-flight` page.
+
+**Do not create `{pageName}.tsx` inside components—use the route file as the main file.**
 
 #### Dynamic Route Pattern
 
