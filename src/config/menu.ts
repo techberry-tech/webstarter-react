@@ -6,6 +6,7 @@ type AnyRoutePath = LinkProps["to"];
 export interface MyMenu {
   title: string;
   items: MyMenuItem[];
+  index: AnyRoutePath;
 }
 
 export interface MyMenuItem {
@@ -17,6 +18,7 @@ export interface MyMenuItem {
 export const MENUS: MyMenu[] = [
   {
     title: "Flight Booking",
+    index: "/flight-booking/search-flight",
     items: [
       {
         icon: IconPlane,
@@ -27,6 +29,7 @@ export const MENUS: MyMenu[] = [
   },
   {
     title: "Accounting",
+    index: "/accounting/users",
     items: [
       {
         icon: IconUsersGroup,

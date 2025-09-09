@@ -3,7 +3,7 @@ import { MENUS, type MyMenu } from "@/config/menu";
 import { cn } from "@/lib/utils";
 import { Box, Button, Divider, Menu, Popover, Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMainLayoutStore } from "./main-layout-store";
 
 export default function MainLayout() {
@@ -39,6 +39,7 @@ export default function MainLayout() {
   const handleSelectMenu = (menu: MyMenu) => {
     if (selectedMenu !== menu) {
       setSelectedMenu(menu);
+      navigate({ to: menu.index });
     }
   };
 
@@ -46,12 +47,6 @@ export default function MainLayout() {
     setSignOutOpened(false);
     logout();
   };
-
-  useEffect(() => {
-    if (selectedMenu && pathname !== selectedMenu.items[0].href) {
-      navigate({ to: selectedMenu.items[0].href });
-    }
-  }, [selectedMenu, navigate, pathname]);
 
   return (
     <main className="grid grid-cols-[220px_1fr] h-screen">
