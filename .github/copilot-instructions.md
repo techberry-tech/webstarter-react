@@ -16,6 +16,9 @@ This comprehensive guide helps AI coding agents work productively in the `websta
 - **Forms**: React Hook Form with Mantine integration
 - **Authentication**: JWT tokens via HTTP-only cookies
 - **Mock API**: Hono.js server with JSON configuration
+- **Dates Components**: Use `@mantine/dates` for date pickers and related UI
+- **Utility Hooks**: Use `@mantine/hooks` for utility hooks (e.g., useDisclosure, useMediaQuery)
+  - Always check the latest Mantine documentation for usage and updates
 
 ### Directory Structure
 
