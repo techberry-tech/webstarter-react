@@ -19,21 +19,53 @@ This comprehensive guide helps AI coding agents work productively in the `websta
 
 ### Directory Structure
 
+This project follows a **multi-application architecture** where each application (like `flight-booking`, `accounting`) contains its own features and components.
+
 ```
 src/
-├── api/                 # API hooks and client configuration
-├── components/          # Reusable UI components
+├── api/                 # API hooks organized by application
+│   ├── client.ts       # Shared API client
+│   ├── auth/           # Authentication APIs
+│   ├── flight-booking/ # Flight booking app APIs
+│   └── accounting/     # Accounting app APIs
+├── components/          # UI components organized by application
+│   ├── layout/         # Shared layout components
+│   ├── flight-booking/ # Flight booking app components
+│   └── accounting/     # Accounting app components
 ├── config/             # App configuration (menu, constants)
-├── core/               # Core functionality (auth, theme)
+├── core/               # Core functionality (auth, theme, router)
 ├── lib/                # Utility functions
-├── routes/             # File-based routing (TanStack Router)
-├── types/              # TypeScript type definitions
+├── routes/             # File-based routing organized by application
+│   ├── __root.tsx      # Root layout
+│   ├── index.tsx       # Home page
+│   ├── _pathlessLayout.tsx # Protected route wrapper
+│   └── _pathlessLayout/    # Protected routes by application
+│       ├── flight-booking/ # Flight booking app routes
+│       └── accounting/     # Accounting app routes
+├── types/              # TypeScript types organized by application
+│   ├── flight-booking/ # Flight booking app types
+│   └── accounting/     # Accounting app types
 └── App.tsx             # Root component
 
 mockup-server/          # Hono.js mock API server
 ├── config.json         # API endpoints and user data
 └── index.ts            # Server implementation
 ```
+
+### Multi-Application Architecture
+
+The project is structured around **applications** rather than individual features:
+
+- **Applications**: Major functional areas (e.g., `flight-booking`, `accounting`)
+- **Features**: Specific functionality within an application (e.g., search flights, manage users)
+- **Menu Structure**: Defined in `src/config/menu.ts` showing application hierarchy
+
+**Important**: When AI agents work with this codebase, they should think in terms of:
+
+1. **Application Name** - The top-level domain (flight-booking, accounting)
+2. **Feature Name** - The specific functionality within that application (search-flight, users)
+
+This means file paths follow the pattern: `[applicationName]/[featureName]` not just `[featureName]`.
 
 ## Detailed Coding Patterns
 
@@ -43,46 +75,54 @@ mockup-server/          # Hono.js mock API server
 
 ```
 src/api/
-├── client.ts           # Axios instance and request wrapper
-├── auth/              # Authentication-related API calls
+├── client.ts                    # Axios instance and request wrapper
+├── auth/                       # Authentication-related API calls
 │   ├── use-auth-login.ts
-│   └── use-auth-logout.ts
-└── [feature]/         # Feature-specific API calls
-    ├── use-get-[resource].ts    # GET requests
+│   ├── use-auth-logout.ts
+│   └── use-auth-status.ts
+└── [applicationName]/          # Application-specific API calls
+    ├── use-get-[resource].ts   # GET requests
     ├── use-create-[resource].ts # POST requests
     ├── use-update-[resource].ts # PUT/PATCH requests
     └── use-delete-[resource].ts # DELETE requests
+
+# Examples:
+# src/api/flight-booking/use-search-flight.ts
+# src/api/accounting/use-get-users.ts
 ```
 
 #### API Hook Pattern (Query)
 
 ```typescript
-// src/api/[feature]/use-get-[resource].ts
+// src/api/[applicationName]/use-get-[resource].ts
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../client'
-import type { APIResponse, [ResourceType] } from '../../types'
+import type { APIResponse, [ResourceType] } from '../../types/[applicationName]'
 
 export const useGet[Resource] = (params?: [ParamType]) => {
   return useQuery({
-    queryKey: ['[resource]', params],
+    queryKey: ['[applicationName]', '[resource]', params],
     queryFn: () => makeRequest<[ResourceType][]>({
       method: 'GET',
-      url: '/api/[endpoint]',
+      url: '/api/[applicationName]/[endpoint]',
       params
     }),
     enabled: !!params, // Add conditions as needed
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
+
+// Example: src/api/flight-booking/use-search-flight.ts
+// Example: src/api/accounting/use-get-users.ts
 ```
 
 #### API Hook Pattern (Mutation)
 
 ```typescript
-// src/api/[feature]/use-create-[resource].ts
+// src/api/[applicationName]/use-create-[resource].ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../client'
-import type { APIResponse, [ResourceType], [CreateResourceType] } from '../../types'
+import type { APIResponse, [ResourceType], [CreateResourceType] } from '../../types/[applicationName]'
 
 export const useCreate[Resource] = () => {
   const queryClient = useQueryClient()
@@ -90,18 +130,21 @@ export const useCreate[Resource] = () => {
   return useMutation({
     mutationFn: (data: [CreateResourceType]) => makeRequest<[ResourceType]>({
       method: 'POST',
-      url: '/api/[endpoint]',
+      url: '/api/[applicationName]/[endpoint]',
       data
     }),
     onSuccess: () => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: ['[resource]'] })
+      queryClient.invalidateQueries({ queryKey: ['[applicationName]', '[resource]'] })
     },
     onError: (error) => {
       console.error('Create [resource] error:', error)
     }
   })
 }
+
+// Example: src/api/flight-booking/use-search-flight.ts (mutation)
+// Example: src/api/accounting/use-create-user.ts
 ```
 
 #### API Client Configuration
@@ -180,25 +223,29 @@ export const useAuthStatus = () => {
 src/routes/
 ├── __root.tsx                    # Root layout
 ├── index.tsx                     # Home page (/)
-├── login.tsx                     # Public login page
+├── login.tsx                     # Public login page (if exists)
 ├── _pathlessLayout.tsx           # Protected route wrapper
-└── _pathlessLayout/             # Protected routes
-    ├── app/                     # App section
-    │   ├── index.tsx           # /app
-    │   └── profile.tsx         # /app/profile
-    └── [feature]/              # Feature routes
-        ├── index.tsx           # /[feature]
-        └── $id.tsx            # /[feature]/$id (dynamic)
+└── _pathlessLayout/             # Protected routes organized by application
+    ├── landing.tsx              # Landing/dashboard page
+    ├── flight-booking/          # Flight booking application routes
+    │   └── search-flight.tsx    # /flight-booking/search-flight
+    └── accounting/              # Accounting application routes
+        └── users.tsx            # /accounting/users
+
+# Route Pattern: /[applicationName]/[featureName]
+# Examples:
+# /flight-booking/search-flight
+# /accounting/users
 ```
 
 #### Route File Pattern
 
 ```typescript
-// src/routes/_pathlessLayout/[feature]/index.tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { [FeatureComponent] } from '../../../components/[feature]'
+// src/routes/_pathlessLayout/[applicationName]/[featureName].tsx
+import { createFileRoute } from '@tanstack/router-router'
+import { [FeatureComponent] } from '../../../components/[applicationName]/[featureName]'
 
-export const Route = createFileRoute('/_pathlessLayout/[feature]/')({
+export const Route = createFileRoute('/_pathlessLayout/[applicationName]/[featureName]')({
   component: [FeatureComponent],
   // Optional: Add search params validation
   validateSearch: (search) => ({
@@ -210,16 +257,24 @@ export const Route = createFileRoute('/_pathlessLayout/[feature]/')({
     // Pre-fetch data if needed
   },
 })
+
+// Examples:
+// src/routes/_pathlessLayout/flight-booking/search-flight.tsx -> /flight-booking/search-flight
+// src/routes/_pathlessLayout/accounting/users.tsx -> /accounting/users
 ```
 
 #### Dynamic Route Pattern
 
 ```typescript
-// src/routes/_pathlessLayout/[feature]/$id.tsx
-export const Route = createFileRoute("/_pathlessLayout/[feature]/$id")({
+// src/routes/_pathlessLayout/[applicationName]/[featureName]/$id.tsx
+export const Route = createFileRoute("/_pathlessLayout/[applicationName]/[featureName]/$id")({
   component: [FeatureDetailComponent],
   // Access params with useParams()
 });
+
+// Examples:
+// src/routes/_pathlessLayout/flight-booking/bookings/$id.tsx -> /flight-booking/bookings/123
+// src/routes/_pathlessLayout/accounting/users/$id.tsx -> /accounting/users/456
 ```
 
 ### 4. UI Components (`src/components/`)
@@ -227,22 +282,28 @@ export const Route = createFileRoute("/_pathlessLayout/[feature]/$id")({
 #### Component Structure Pattern
 
 ```
-src/components/[feature]/
-├── index.ts                 # Export barrel
-├── [feature-main].tsx      # Main component
-├── form.tsx                # Forms
-├── table.tsx               # Data tables
-├── card.tsx                # Card components
-└── types.ts                # Local types
+src/components/[applicationName]/
+├── index.ts                     # Export barrel
+├── [featureName]/              # Feature-specific components
+│   ├── index.ts                # Feature export barrel
+│   ├── [feature-main].tsx      # Main component
+│   ├── form.tsx                # Forms
+│   ├── table.tsx               # Data tables
+│   ├── card.tsx                # Card components
+│   └── types.ts                # Local types
+
+# Examples:
+# src/components/flight-booking/search-flight/
+# src/components/accounting/users/
 ```
 
 #### Form Component Pattern
 
-```typescript
-// src/components/[feature]/form.tsx
+````typescript
+// src/components/[applicationName]/[featureName]/form.tsx
 import { useForm } from 'react-hook-form'
 import { Button, TextInput, Group, Stack } from '@mantine/core'
-import { cn } from '../../lib/utils'
+import { cn } from '../../../lib/utils'
 
 interface [Feature]FormProps {
   onSubmit: (data: [FormDataType]) => void
@@ -285,12 +346,10 @@ export const [Feature]Form = ({
     </form>
   )
 }
-```
-
-#### Table Component Pattern
+```#### Table Component Pattern
 
 ```typescript
-// src/components/[feature]/table.tsx
+// src/components/[applicationName]/[featureName]/table.tsx
 import { Table, Checkbox, ActionIcon, Group } from '@mantine/core'
 import { IconEdit, IconTrash, IconEye } from '@tabler/icons-react'
 
@@ -364,14 +423,14 @@ export const [Feature]Table = ({
     </Table>
   )
 }
-```
+````
 
 ### 5. State Management Patterns
 
 #### Feature Store Pattern (Zustand)
 
 ```typescript
-// src/components/[feature]/store.ts
+// src/components/[applicationName]/[featureName]/store.ts
 interface [Feature]State {
   // State properties
   selectedItems: string[]
@@ -422,7 +481,7 @@ export interface PaginatedResponse<T> {
 #### Feature Types
 
 ```typescript
-// src/types/[feature]/index.ts
+// src/types/[applicationName]/index.ts
 export interface [Resource] {
   id: string
   name: string
@@ -453,41 +512,43 @@ export interface [Resource]Filters {
 
 ```typescript
 // src/config/menu.ts
-export interface MyMenuItem {
-  key: string;
-  label: string;
-  icon: React.ComponentType<any>;
-  path?: string;
-  children?: MyMenuItem[];
+export interface MyMenu {
+  title: string;
+  items: MyMenuItem[];
 }
 
-export const menu: MyMenu = [
+export interface MyMenuItem {
+  icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>>;
+  label: string;
+  href: AnyRoutePath;
+}
+
+export const MENUS: MyMenu[] = [
   {
-    key: "dashboard",
-    label: "Dashboard",
-    icon: IconDashboard,
-    path: "/app",
+    title: "Flight Booking",
+    items: [
+      {
+        icon: IconPlane,
+        label: "Search Flights",
+        href: "/flight-booking/search-flight",
+      },
+    ],
   },
   {
-    key: "[feature]",
-    label: "[Feature Name]",
-    icon: Icon[FeatureName],
-    children: [
+    title: "Accounting",
+    items: [
       {
-        key: "[feature]-list",
-        label: "List",
-        icon: IconList,
-        path: "/[feature]",
-      },
-      {
-        key: "[feature]-create",
-        label: "Create",
-        icon: IconPlus,
-        path: "/[feature]/create",
+        icon: IconUsersGroup,
+        label: "Users",
+        href: "/accounting/users",
       },
     ],
   },
 ];
+
+// Pattern: Each menu represents an application
+// Each item within a menu represents a feature within that application
+// URLs follow: /[applicationName]/[featureName]
 ```
 
 ## Development Workflows & Commands
@@ -533,7 +594,7 @@ npm run type-check
     }
   ],
   "endpoints": {
-    "/api/[feature]": {
+    "/api/[applicationName]/[feature]": {
       "GET": { "success": true, "data": [] },
       "POST": { "success": true, "data": {} }
     }
@@ -549,14 +610,45 @@ npm run type-check
 
 ## AI-Specific Guidelines
 
+### Multi-Application Architecture Key Points
+
+**CRITICAL**: This project uses applications, not just features. Always think in terms of:
+
+- `[applicationName]` = Top-level domain (flight-booking, accounting, etc.)
+- `[featureName]` = Specific functionality within that application (search-flight, users, etc.)
+
+**File Structure Pattern**:
+
+- ❌ Wrong: `src/api/users/`
+- ✅ Correct: `src/api/accounting/users/`
+- ❌ Wrong: `src/components/search-flight/`
+- ✅ Correct: `src/components/flight-booking/search-flight/`
+
+**URL Pattern**: `/[applicationName]/[featureName]`
+
+- Examples: `/flight-booking/search-flight`, `/accounting/users`
+
 ### When Adding New Features:
 
-1. **Create API hooks first** using the patterns above
-2. **Define types** in `src/types/[feature]/`
-3. **Create UI components** following the component structure
-4. **Add routes** using file-based routing
-5. **Update menu configuration** if needed
-6. **Add mock endpoints** in `config.json`
+1. **Identify the Application**: Determine which application this feature belongs to
+2. **Create API hooks**: `src/api/[applicationName]/use-[feature-action].ts`
+3. **Define types**: `src/types/[applicationName]/`
+4. **Create UI components**: `src/components/[applicationName]/[featureName]/`
+5. **Add routes**: `src/routes/_pathlessLayout/[applicationName]/[featureName].tsx`
+6. **Update menu configuration** in `src/config/menu.ts` under the correct application
+7. **Add mock endpoints** in `config.json` following `/api/[applicationName]/[endpoint]`
+
+### Practical Example - Adding a "Booking History" Feature
+
+If you need to add a "Booking History" feature to the Flight Booking application:
+
+1. **Application**: `flight-booking` (not just "booking-history")
+2. **Feature**: `booking-history`
+3. **API Hook**: `src/api/flight-booking/use-get-booking-history.ts`
+4. **Component**: `src/components/flight-booking/booking-history/`
+5. **Route**: `src/routes/_pathlessLayout/flight-booking/booking-history.tsx`
+6. **URL**: `/flight-booking/booking-history`
+7. **Menu**: Add to "Flight Booking" section in `src/config/menu.ts`
 
 ### Code Generation Priorities:
 
