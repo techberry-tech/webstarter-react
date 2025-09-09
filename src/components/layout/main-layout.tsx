@@ -1,5 +1,5 @@
 import useAuthLogout from "@/api/auth/use-auth-logout";
-import { MENUS, type MyMenu } from "@/config/menu";
+import { MENU_WIDTH, MENUS, type MyMenu } from "@/config/menu";
 import { cn } from "@/lib/utils";
 import { Box, Button, Divider, Menu, Popover, Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
@@ -55,7 +55,7 @@ export default function MainLayout() {
           <Text size="xs" fw={500} c="dimmed">
             Select Application
           </Text>
-          <Menu shadow="md" width={200}>
+          <Menu shadow="md" width={MENU_WIDTH}>
             <Menu.Target>
               <Button fullWidth variant="default">
                 {selectedMenu.title}
