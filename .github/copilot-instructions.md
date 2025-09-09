@@ -97,7 +97,8 @@ src/api/
 // src/api/[applicationName]/use-get-[resource].ts
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../client'
-import type { APIResponse, [ResourceType] } from '../../types/[applicationName]'
+import type { APIResponse } from '@/types/api'
+import type { [ResourceType] } from '@/types/[applicationName]'
 
 export const useGet[Resource] = (params?: [ParamType]) => {
   return useQuery({
@@ -122,7 +123,8 @@ export const useGet[Resource] = (params?: [ParamType]) => {
 // src/api/[applicationName]/use-create-[resource].ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../client'
-import type { APIResponse, [ResourceType], [CreateResourceType] } from '../../types/[applicationName]'
+import type { APIResponse } from '@/types/api'
+import type { [ResourceType], [CreateResourceType] } from '@/types/[applicationName]'
 
 export const useCreate[Resource] = () => {
   const queryClient = useQueryClient()
@@ -236,6 +238,9 @@ src/routes/
 # Examples:
 # /flight-booking/search-flight
 # /accounting/users
+
+# Page Creation: Use {pageName}.tsx directly as the main route file
+# Example: search-flight.tsx (not search-flight/index.tsx)
 ```
 
 #### Route File Pattern
@@ -243,7 +248,7 @@ src/routes/
 ```typescript
 // src/routes/_pathlessLayout/[applicationName]/[featureName].tsx
 import { createFileRoute } from '@tanstack/router-router'
-import { [FeatureComponent] } from '../../../components/[applicationName]/[featureName]'
+import { [FeatureComponent] } from '../../../components/[applicationName]/[featureName]/[feature-main]'
 
 export const Route = createFileRoute('/_pathlessLayout/[applicationName]/[featureName]')({
   component: [FeatureComponent],
@@ -283,9 +288,7 @@ export const Route = createFileRoute("/_pathlessLayout/[applicationName]/[featur
 
 ```
 src/components/[applicationName]/
-├── index.ts                     # Export barrel
 ├── [featureName]/              # Feature-specific components
-│   ├── index.ts                # Feature export barrel
 │   ├── [feature-main].tsx      # Main component
 │   ├── form.tsx                # Forms
 │   ├── table.tsx               # Data tables
@@ -295,6 +298,9 @@ src/components/[applicationName]/
 # Examples:
 # src/components/flight-booking/search-flight/
 # src/components/accounting/users/
+
+# Note: Do NOT create index.ts files for global exports
+# Import components directly from their individual files
 ```
 
 #### Form Component Pattern
@@ -581,8 +587,10 @@ npm run type-check
 
 ### Mock Server Configuration
 
+**IMPORTANT**: The mockup server is READ-ONLY. Do not modify `mockup-server/config.json` or any files in the `mockup-server/` directory.
+
 ```json
-// mockup-server/config.json
+// mockup-server/config.json (READ-ONLY)
 {
   "users": [
     {
@@ -636,7 +644,6 @@ npm run type-check
 4. **Create UI components**: `src/components/[applicationName]/[featureName]/`
 5. **Add routes**: `src/routes/_pathlessLayout/[applicationName]/[featureName].tsx`
 6. **Update menu configuration** in `src/config/menu.ts` under the correct application
-7. **Add mock endpoints** in `config.json` following `/api/[applicationName]/[endpoint]`
 
 ### Practical Example - Adding a "Booking History" Feature
 
