@@ -1,4 +1,4 @@
-import { IconPlane, IconUsersGroup, type Icon, type IconProps } from "@tabler/icons-react";
+import { IconSearch, IconUsersGroup, type Icon, type IconProps } from "@tabler/icons-react";
 import type { LinkProps } from "@tanstack/react-router";
 
 type AnyRoutePath = LinkProps["to"];
@@ -6,6 +6,7 @@ type AnyRoutePath = LinkProps["to"];
 export interface MyMenu {
   title: string;
   items: MyMenuItem[];
+  index: AnyRoutePath;
 }
 
 export interface MyMenuItem {
@@ -14,12 +15,15 @@ export interface MyMenuItem {
   href: AnyRoutePath;
 }
 
+export const MENU_WIDTH: number = 240;
+
 export const MENUS: MyMenu[] = [
   {
     title: "Flight Booking",
+    index: "/flight-booking/search-flight",
     items: [
       {
-        icon: IconPlane,
+        icon: IconSearch,
         label: "Search Flights",
         href: "/flight-booking/search-flight",
       },
@@ -27,6 +31,7 @@ export const MENUS: MyMenu[] = [
   },
   {
     title: "Accounting",
+    index: "/accounting/users",
     items: [
       {
         icon: IconUsersGroup,

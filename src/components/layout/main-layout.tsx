@@ -1,9 +1,9 @@
 import useAuthLogout from "@/api/auth/use-auth-logout";
-import { MENUS, type MyMenu } from "@/config/menu";
+import { MENU_WIDTH, MENUS, type MyMenu } from "@/config/menu";
 import { cn } from "@/lib/utils";
 import { Box, Button, Divider, Menu, Popover, Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMainLayoutStore } from "./main-layout-store";
 
 export default function MainLayout() {
@@ -39,6 +39,7 @@ export default function MainLayout() {
   const handleSelectMenu = (menu: MyMenu) => {
     if (selectedMenu !== menu) {
       setSelectedMenu(menu);
+      navigate({ to: menu.index });
     }
   };
 
@@ -47,12 +48,6 @@ export default function MainLayout() {
     logout();
   };
 
-  useEffect(() => {
-    if (selectedMenu && pathname !== selectedMenu.items[0].href) {
-      navigate({ to: selectedMenu.items[0].href });
-    }
-  }, [selectedMenu, navigate, pathname]);
-
   return (
     <main className="grid grid-cols-[220px_1fr] h-screen">
       <nav className="flex flex-col bg-[var(--mantine-color-body)] h-full border-r-[var(--mantine-color-gray-3)] border-r">
@@ -60,7 +55,7 @@ export default function MainLayout() {
           <Text size="xs" fw={500} c="dimmed">
             Select Application
           </Text>
-          <Menu shadow="md" width={200}>
+          <Menu shadow="md" width={MENU_WIDTH}>
             <Menu.Target>
               <Button fullWidth variant="default">
                 {selectedMenu.title}
